@@ -15,9 +15,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Oroo — AI Communication Coach",
   description: "Practice speaking, get real feedback, powered by a live AI avatar.",
-  icons: {
-    icon: "/oroo_icon.svg",
-  },
 };
 
 export default function RootLayout({
