@@ -26,3 +26,9 @@ body {
   overscroll-behavior: none;
   overflow-x: hidden;
 }
+
+html, body {
+  background-color: #0A0F0A;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+}
