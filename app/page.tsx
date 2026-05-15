@@ -360,6 +360,41 @@ export default function HomePage() {
           background: linear-gradient(90deg, transparent, rgba(6,234,14,0.1), transparent);
           margin: 8px 0 28px;
         }
+
+        /* ── Mobile responsive ── */
+        @media (max-width: 640px) {
+
+          /* Coach cards — stack avatar and text side by side tighter */
+          .card {
+          padding: 14px;
+        }
+
+        /* Mode cards — reduce padding and font sizes */
+        .card-icon {
+          width: 32px;
+          height: 32px;
+          margin-bottom: 10px;
+        }
+
+        /* Section labels smaller */
+        .section-label {
+          font-size: 9px;
+          margin-bottom: 10px;
+        }
+
+        /* Pill buttons smaller */
+        .pill {
+          padding: 7px 16px;
+          font-size: 12px;
+        }
+
+        /* CTA button */
+        .cta-btn {
+          padding: 14px;
+          font-size: 14px;
+        }
+      }
+
       `}</style>
 
       <div className={`page-wrap${mounted ? ' visible' : ''}`}>
@@ -410,7 +445,7 @@ export default function HomePage() {
         </section>
 
         {/* ── CONTENT AREA ── */}
-        <div style={{ maxWidth: '760px', margin: '0 auto', padding: '0 32px 80px' }}>
+        <div style={{ maxWidth: '760px', margin: '0 auto', padding: 'clamp(0px, 4vw, 32px) clamp(12px, 4vw, 32px) 80px' }}>
 
           {/* ── CHOOSE YOUR COACH ── */}
           <div style={{ marginBottom: '32px' }}>
@@ -463,17 +498,17 @@ export default function HomePage() {
           {/* ── CHOOSE YOUR MODE ── */}
           <div style={{ marginBottom: '32px' }}>
             <p className="section-label">Choose your mode</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '12px' }}>
               {MODES.map((mode) => (
                 <button
                   key={mode.id}
                   className={`card${selectedMode === mode.id ? ' selected' : ''}`}
                   onClick={() => setSelectedMode(mode.id)}>
                   <div className="card-icon">{mode.icon}</div>
-                  <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '13.5px', marginBottom: '6px' }}>
+                  <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 'clamp(11px, 2.5vw, 13.5px)', marginBottom: '6px' }}>
                     {mode.label}
                   </p>
-                  <p style={{ color: 'var(--text-subtle)', fontSize: '12px', lineHeight: 1.55 }}>
+                  <p style={{ color: 'var(--text-subtle)', fontSize: 'clamp(10px, 2vw, 12px)', lineHeight: 1.55 }}>
                     {mode.desc}
                   </p>
                 </button>
