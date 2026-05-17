@@ -65,9 +65,10 @@ function SessionHUD({ mode, character }: { mode: string; character: string }) {
   const [fillerCounts, setFillerCounts] = useState<Record<string, number>>({})
   const fullTranscriptRef = useRef('')
   const fillerCountsRef = useRef<Record<string, number>>({}) // ADD THIS LINE
-  const [currentWord, setCurrentWord] = useState('')
-  const [wordGameRound, setWordGameRound] = useState(0)
-  const [wordGameFails, setWordGameFails] = useState(0)
+  const currentWordRef = useRef('')
+  const wordGameRoundRef = useRef(0)
+  const wordGameFailsRef = useRef(0)
+  const [wordGameDisplay, setWordGameDisplay] = useState({ currentWord: '', round: 0, fails: 0 })
   const deepgramRef = useRef<WebSocket | null>(null)
 
   useEffect(() => {
@@ -167,12 +168,17 @@ function SessionHUD({ mode, character }: { mode: string; character: string }) {
             const words = text.trim().split(/\s+/)
             const firstWord = words[0]?.toLowerCase().replace(/[^a-z]/g, '')
             const lastWord = words[words.length - 1]?.toLowerCase().replace(/[^a-z]/g, '')
-            if (currentWord && firstWord !== currentWord) {
-              setWordGameFails((prev) => prev + 1)
-            } else if (currentWord) {
-              setWordGameRound((prev) => prev + 1)
+            if (currentWordRef.current && firstWord !== currentWordRef.current) {
+              wordGameFailsRef.current += 1
+            } else if (currentWordRef.current) {
+              wordGameRoundRef.current += 1
             }
-            if (lastWord) setCurrentWord(lastWord)
+            if (lastWord) currentWordRef.current = lastWord
+            setWordGameDisplay({
+              currentWord: currentWordRef.current,
+              round: wordGameRoundRef.current,
+              fails: wordGameFailsRef.current,
+            })
           }
         }
       }
@@ -189,7 +195,7 @@ function SessionHUD({ mode, character }: { mode: string; character: string }) {
     // Save using refs — always up to date unlike state
     sessionStorage.setItem('transcript', fullTranscriptRef.current)
     sessionStorage.setItem('fillerCounts', JSON.stringify(fillerCountsRef.current))
-    sessionStorage.setItem('wordGameRound', String(wordGameRound))
+    sessionStorage.setItem('wordGameRound', String(wordGameRoundRef.current))
     
     setTimeout(() => {
       end()
@@ -246,11 +252,11 @@ function SessionHUD({ mode, character }: { mode: string; character: string }) {
         <div style={{ width:'100%', maxWidth:'400px', background:'#111A11', border:'1px solid rgba(6,234,14,0.12)', borderRadius:'16px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'20px' }}>
           {mode === 'wordgame' ? (
             <div>
-              <p style={{ fontSize:'10px', color:'#8A9E8A', textTransform:'uppercase', letterSpacing:'0.12em' }}>{wordGameFails >= 3 ? 'Game Over' : 'Start with'}</p>
-              <p style={{ fontFamily:"'Syne',sans-serif", fontSize:'24px', fontWeight:800, color:wordGameFails >= 3 ? '#FF4D4D' : '#06EA0E', textTransform:'uppercase', letterSpacing:'0.06em', marginTop:'2px' }}>
-                {wordGameFails >= 3 ? `${wordGameRound} rounds` : (currentWord || '...')}
+              <p style={{ fontSize:'10px', color:'#8A9E8A', textTransform:'uppercase', letterSpacing:'0.12em' }}>{wordGameDisplay.fails >= 3 ? 'Game Over' : 'Start with'}</p>
+              <p style={{ fontFamily:"'Syne',sans-serif", fontSize:'24px', fontWeight:800, color:wordGameDisplay.fails >= 3 ? '#FF4D4D' : '#06EA0E', textTransform:'uppercase', letterSpacing:'0.06em', marginTop:'2px' }}>
+                {wordGameDisplay.fails >= 3 ? `${wordGameDisplay.round} rounds` : (wordGameDisplay.currentWord || '...')}
               </p>
-              <p style={{ fontSize:'11px', color:'#8A9E8A', marginTop:'4px' }}>Round {wordGameRound} · {wordGameFails}/3 fails</p>
+              <p style={{ fontSize:'11px', color:'#8A9E8A', marginTop:'4px' }}>Round {wordGameDisplay.round} · {wordGameDisplay.fails}/3 fails</p>
             </div>
           ) : (
             <div>
